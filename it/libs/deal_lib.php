@@ -20,6 +20,7 @@ $var_user_id = $_SESSION['uid'];
 $var_title = $_SESSION['title'];
 $var_description = $_SESSION['description'];
 $var_qty = $_SESSION['qty'];
+$var_max_order = $_SESSION['max_order']; ////////////////////////////////////////
 $var_unit_price = $_SESSION['unit_price'];
 $var_unit = $_SESSION['unit'];
 $var_uother = $_SESSION['uother'];
@@ -52,6 +53,7 @@ echo "var_user_id: " . $var_user_id. "<br/>";
 echo "var_user_key: " .$var_user_key. "</br>";
 echo "var_description: " . $var_description . "<br/>";
 echo "var_qty: " . $var_qty . "<br/>";
+echo "var_max_order: " . $var_max_order . "<br/>"; /////////////////////////
 echo "var_unit_price: " . $var_unit_price . "<br/>";
 echo "var_unit: " . $var_unit . "<br/>";
 echo "var_category: " . $var_category . "<br/>";
@@ -72,17 +74,38 @@ echo "var_shipping_included: " . $var_shipping_included . "<br/>";
 echo "var_shipping_description: " . $var_shipping_description . "<br/>";
 echo "var_datafile: " . $var_datafile . "<br/>";
 
+// Take care of start and end date
+if (($var_time_restricted == "no") ||($var_start_date == "") || ($var_end_date == "")) { // When no time restricted
+    // Start date is today
+    $var_start_date_db = date('Y-m-d');
+    //$var_end_date_db = date('Y-m-d');
+    // End date is 30 days from today
+    //date_add($var_end_date_db, date_interval_create_from_date_string("30 days"));
+    $var_end_date_db = date('Y-m-d', strtotime("+30 days"));
+}
+else { // When time restricted
+    $var_start_date_db = strtotime($var_start_date);
+    $var_start_date_db = date('Y-m-d', $var_start_date_db);
+    $var_end_date_db = strtotime($var_end_date);
+    $var_end_date_db = date('Y-m-d', $var_end_date_db);
+}
+
+// Test display
+echo "var_start_date_db: " . $var_start_date_db . "<br/>";
+echo "var_end_date_db: " . $var_end_date_db . "<br/>";
+
 
 
 
 //inserting into db
 
-$sql="insert into create_deal(start_date,end_date,user_id,user_name,title,description,deal_category,qty,unit_price,unit,time_restricted,number_discount_option,number_discount_1,amount_discount_1,number_discount_2,amount_discount_2,number_discount_3,amount_discount_3,location_restricted,location_description,shipping_included,shipping_description,deal_image) values ('$var_start_date','$var_end_date','$var_user_key','$var_user_id','$var_title','$var_description','$var_category','$var_qty','$var_unit_price','$var_unit','$var_time_restricted','$var_number_discount_option','$var_number_discount_1','$var_amount_discount_1','$var_number_discount_2','$var_amount_discount_2','$var_number_discount_3','$var_amount_discount_3','$var_location_restricted','$var_description','$var_shipping_included','$var_shipping_description','$var_datafile')";
+$sql="insert into create_deal(start_date,end_date,user_id,user_name,title,description,deal_category,qty,max_order,unit_price,unit,time_restricted,number_discount_option,number_discount_1,amount_discount_1,number_discount_2,amount_discount_2,number_discount_3,amount_discount_3,location_restricted,location_description,shipping_included,shipping_description,deal_image) values ('$var_start_date_db','$var_end_date_db','$var_user_key','$var_user_id','$var_title','$var_description','$var_category','$var_qty','$var_max_order','$var_unit_price','$var_unit','$var_time_restricted','$var_number_discount_option','$var_number_discount_1','$var_amount_discount_1','$var_number_discount_2','$var_amount_discount_2','$var_number_discount_3','$var_amount_discount_3','$var_location_restricted','$var_description','$var_shipping_included','$var_shipping_description','$var_datafile')";
 
 if(mysqli_query($con,$sql))
 {
 echo "<script> alert(\"New record saved successfully..!\")</script>";
 mysqli_close($con);
+ echo "<script type=\"text/javascript\">window.location.replace(\"../seller_view.php\");</script>";
 }
 else
 {

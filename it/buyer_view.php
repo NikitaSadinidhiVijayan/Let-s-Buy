@@ -134,7 +134,13 @@ $user_key=$_SESSION["ukey"]
 					<tbody>
 					
 					 <?php 
-						$var_display_deal = "SELECT create_deal_id,order_quantity,address,state,zipcode FROM join_deal WHERE user_id='$user_key'";
+						$var_display_deal = "
+                            SELECT j.create_deal_id, j.order_quantity, j.address, j.state, j.zipcode, c.title
+                            FROM join_deal AS j
+                            INNER JOIN create_deal AS c
+                            ON j.create_deal_id = c.deal_id
+                            WHERE user_id='$user_key'
+                        ";
 						$var_run_display_deal = mysqli_query($con,$var_display_deal);
 						
 						while($var_row_display_deal = mysqli_fetch_array($var_run_display_deal))
@@ -144,9 +150,10 @@ $user_key=$_SESSION["ukey"]
 							$var_display_address = $var_row_display_deal['address'];
 							$var_display_state = $var_row_display_deal['state'];
 							$var_display_zipcode = $var_row_display_deal['zipcode'];
+							$var_display_title = $var_row_display_deal['title'];
 							
 							echo "<tr>
-							 <td> <a href= 'single_product.php?deal_url_id=$var_display_deal_id'> $var_display_deal_id </a></td>
+							 <td> <a href= 'single_product.php?deal_url_id=$var_display_deal_id'> $var_display_title </a></td>
 							 <td> $var_display_deal_qty </td>
 							 <td> $var_display_address </td>
 							 <td> $var_display_state </td>

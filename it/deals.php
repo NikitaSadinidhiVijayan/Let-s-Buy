@@ -14,6 +14,7 @@ $field_name = "";
 $title_value = "";
 $description_value = "";
 $qty_value = "";
+$max_order_value = "";
 $unit_price_value = "";
 
 $selected_unit_tickets = "";
@@ -82,6 +83,13 @@ if($_POST) {
     $validator->add_rule_to_field($field_name, array('empty'), $field_display_name);
     $validator->add_rule_to_field($field_name, array('numbers-only'), $field_display_name);
 
+    // max_order
+    $field_name = "max_order";
+    $field_display_name = "Maximum Quantity per order";
+    $validator->add_field($field_name);
+    $validator->add_rule_to_field($field_name, array('empty'), $field_display_name);
+    $validator->add_rule_to_field($field_name, array('numbers-only'), $field_display_name);
+
     // unit_price
     $field_name = "unit_price";
     $field_display_name = "Regular price";
@@ -109,6 +117,7 @@ if($_POST) {
     $validator->add_field($field_name);
     $validator->add_rule_to_field($field_name, array('empty'), $field_display_name);
     $validator->add_rule_to_field($field_name, array('numbers-only'), $field_display_name);
+    $validator->add_rule_to_field($field_name, array('greater-amount-only-1'), $field_display_name);
 
     // amount_discount_1
     $field_name = "amount_discount_1";
@@ -126,6 +135,7 @@ if($_POST) {
         $validator->add_field($field_name);
         $validator->add_rule_to_field($field_name, array('empty'), $field_display_name);
         $validator->add_rule_to_field($field_name, array('numbers-only'), $field_display_name);
+        $validator->add_rule_to_field($field_name, array('greater-amount-only-2'), $field_display_name);
 
         // amount_discount_2
         $field_name = "amount_discount_2";
@@ -144,6 +154,7 @@ if($_POST) {
         $validator->add_field($field_name);
         $validator->add_rule_to_field($field_name, array('empty'), $field_display_name);
         $validator->add_rule_to_field($field_name, array('numbers-only'), $field_display_name);
+        $validator->add_rule_to_field($field_name, array('greater-amount-only-3'), $field_display_name);
 
         // amount_discount_3
         $field_name = "amount_discount_3";
@@ -201,6 +212,7 @@ if($_POST) {
         $_SESSION["title"] = $_POST["title"];
         $_SESSION["description"] = $_POST["description"];
         $_SESSION["qty"] = $_POST["qty"];
+        $_SESSION["max_order"] = $_POST["max_order"];
         $_SESSION["unit_price"] = $_POST["unit_price"];
         $_SESSION["unit"] = $_POST["unit"];
         if ($_POST["unit"] == "other") {
@@ -279,15 +291,59 @@ if($_POST) {
             $_SESSION["datafile"] = "";
         }
 
+        // Display confirm message
+        $confirm_msg = "";
+        $confirm_msg = $confirm_msg."Please review your input!!!"."\n";
+        $confirm_msg = $confirm_msg."=================================="."\n";
+        $confirm_msg = $confirm_msg."Title: ".$_SESSION['title']."\n";
+        $confirm_msg = $confirm_msg."Description: ".$_SESSION['description']."\n";
+        $confirm_msg = $confirm_msg."Minimum Quantity per order: ".$_SESSION['qty']."\n";
+        $confirm_msg = $confirm_msg."Maximum Quantity per order: ".$_SESSION['max_order']."\n";
+        $confirm_msg = $confirm_msg."Regular price: ".$_SESSION['unit_price']."\n";
+        $confirm_msg = $confirm_msg."Unit: ".$_SESSION['unit']."\n";
+        $confirm_msg = $confirm_msg."Other Unit: ".$_SESSION['uother']."\n";
+        $confirm_msg = $confirm_msg."Category: ".$_SESSION['category']."\n";
+        $confirm_msg = $confirm_msg."# of Discount Option: ".$_SESSION['number_discount_option']."\n";
+        $confirm_msg = $confirm_msg."First quantity: ".$_SESSION['number_discount_1']."\n";
+        $confirm_msg = $confirm_msg."First price: ".$_SESSION['amount_discount_1']."\n";
+        $confirm_msg = $confirm_msg."Second quantity: ".$_SESSION['number_discount_2']."\n";
+        $confirm_msg = $confirm_msg."Second price: ".$_SESSION['amount_discount_2']."\n";
+        $confirm_msg = $confirm_msg."Third quantity: ".$_SESSION['number_discount_3']."\n";
+        $confirm_msg = $confirm_msg."Third price: ".$_SESSION['amount_discount_3']."\n";
+        $confirm_msg = $confirm_msg."Time Restricted: ".$_SESSION['time_restricted']."\n";
+        $confirm_msg = $confirm_msg."Start date: ".$_SESSION['start_date']."\n";
+        $confirm_msg = $confirm_msg."End date: ".$_SESSION['end_date']."\n";
+        $confirm_msg = $confirm_msg."Location Restricted: ".$_SESSION['location_restricted']."\n";
+        $confirm_msg = $confirm_msg."Location Description: ".$_SESSION['location_restricted']."\n";
+        $confirm_msg = $confirm_msg."Shipping Included: ".$_SESSION['shipping_included']."\n";
+        $confirm_msg = $confirm_msg."Shipping Description: ".$_SESSION['shipping_description']."\n";
+        $confirm_msg = $confirm_msg."Image File: ".$_SESSION['datafile']."\n";
+        $confirm_msg = $confirm_msg."=================================="."\n";
+        $confirm_msg = $confirm_msg."If it is accurate, click the OK button to submit data."."\n";
+
+?>
+
+
+        <script>
+            var msgTxt = <?php echo json_encode($confirm_msg); ?>;
+            var r = confirm(msgTxt);
+            if (r == true) {
+                window.location.replace("./libs/deal_lib.php");
+            }
+        </script>
+
+
+<?php
         // Go to DB insert page
-        echo "<script type=\"text/javascript\">window.location.replace(\"./libs/deal_lib.php\");</script>";
+        //echo "<script type=\"text/javascript\">window.location.replace(\"./libs/deal_lib.php\");</script>";
 
     }
     // invalid input
-    else {
+    //else {
         $title_value = $_POST["title"];
         $description_value = $_POST["description"];
         $qty_value = $_POST["qty"];
+        $max_order_value = $_POST["max_order"];
         $unit_price_value = $_POST["unit_price"];
 
         switch ($_POST["unit"]) {
@@ -391,7 +447,7 @@ if($_POST) {
         }
 
         $shipping_description_value = $_POST["shipping_description"];
-    }
+    //}
 }
 
 ?>
@@ -523,7 +579,6 @@ if($_POST) {
 								<div class="controls">
 									<input  class="form-control" type="text" name="qty" id="qty" placeholder="* Minimum Quantity per order" value="<?php echo $qty_value;?>" required />
                                     <?php $validator->out_field_error('qty');?>
-										
 										<!--<input class = "span5" type="text" name= "unit"id = "unit" placeholder= "* Please Choose the unit"> -->
 										<!--<option>---Unit--</option>
 										<select name="unit">
@@ -538,11 +593,22 @@ if($_POST) {
 										<option value= "case">Cases</option>										
 										<option value= "other">Others</option>
 									</select> -->
-									<br>
-									<input class="form-control" type="text" id="unit_price" name="unit_price" placeholder="* Enter regular price..." value="<?php echo $unit_price_value;?>" required />
-                                    <?php $validator->out_field_error('unit_price');?>
 								</div>
 							</div>
+
+                            <div class="form-group">
+                                <div class="controls">
+                                    <input  class="form-control" type="text" name="max_order" id="max_order" placeholder="* Maximum Quantity per order" value="<?php echo $max_order_value;?>" required />
+                                    <?php $validator->out_field_error('max_order');?>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="controls">
+                                    <input class="form-control" type="text" id="unit_price" name="unit_price" placeholder="* Enter regular price..." value="<?php echo $unit_price_value;?>" required />
+                                    <?php $validator->out_field_error('unit_price');?>
+                                </div>
+                            </div>
 
 							<div class="form-group">
 								<div class="controls">

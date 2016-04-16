@@ -71,6 +71,14 @@
                  }
                  break;
 
+             case 'greater-amount-only-1':
+                 $number_max = $_POST['max_order'];
+                 $number_1 = $_POST["number_discount_1"];
+                 if($number_1 < $number_max) {
+                     $this->add_error_to_field($field_name, ucwords($field_display_name)." must be greater than buyer's maximum order quantity.");
+                 }
+                 break;
+
              case 'discount-only-1':
                  $price_r = $_POST['unit_price'];
                  $price_1 = $_POST["amount_discount_1"];
@@ -79,11 +87,36 @@
                  }
                  break;
 
+             case 'greater-amount-only-2':
+                 $number_max = $_POST['max_order'];
+                 $number_1 = $_POST["number_discount_1"];
+                 $number_2 = $_POST["number_discount_2"];
+                 if($number_2 < $number_max) {
+                     $this->add_error_to_field($field_name, ucwords($field_display_name)." must be greater than buyer's maximum order quantity.");
+                 }
+                 if($number_2 < $number_1) {
+                     $this->add_error_to_field($field_name, ucwords($field_display_name)." must be greater than the first quantity.");
+                 }
+                 break;
+
              case 'discount-only-2':
                  $price_1 = $_POST["amount_discount_1"];
                  $price_2 = $_POST["amount_discount_2"];
                  if($price_1 <= $price_2) {
                      $this->add_error_to_field($field_name, ucwords($field_display_name)." must be less than First price.");
+                 }
+                 break;
+
+             case 'greater-amount-only-3':
+                 $number_max = $_POST['max_order'];
+                 $number_1 = $_POST["number_discount_1"];
+                 $number_2 = $_POST["number_discount_2"];
+                 $number_3 = $_POST["number_discount_3"];
+                 if($number_3 < $number_max) {
+                     $this->add_error_to_field($field_name, ucwords($field_display_name)." must be greater than buyer's maximum order quantity.");
+                 }
+                 if(($number_3 < $number_1) || ($number_3 < $number_2)) {
+                     $this->add_error_to_field($field_name, ucwords($field_display_name)." must be greater than the first and second quantity.");
                  }
                  break;
 

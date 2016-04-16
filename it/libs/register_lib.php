@@ -96,9 +96,11 @@ else if ($var_type==='buyer') {
 
 
 if (mysqli_query($con, $sql)) {
-	echo "<script> alert(\"New record saved successfully..!\")</script>";
-	header("Location:http://localhost/it/it/index.php");
+	echo "<script> alert(\"you registered successfully..!\")</script>";
+	//header("Location:http://localhost/it/it/index.php");
 	mysqli_close($con);
+    echo "<script> alert(\"Please log in at index page...\")</script>";
+    echo "<script type=\"text/javascript\">window.location.replace(\"../index.php\");</script>";
 }
 else {
 	echo "<script> alert(\"New record not saved successfully..!\")</script>";
